@@ -1,6 +1,6 @@
-# Dashchan Extension: haruhichan
+# Dashchan Extension: Kohlchan
 
-Extension for haruhichan.ovh.
+Extension for kohlchan.net
 
 ## License
 
