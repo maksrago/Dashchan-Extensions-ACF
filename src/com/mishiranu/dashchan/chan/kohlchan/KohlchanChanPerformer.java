@@ -252,6 +252,8 @@ public class KohlchanChanPerformer extends ChanPerformer
 	public SendReportPostsResult onSendReportPosts(SendReportPostsData data) throws HttpException, ApiException,
 			InvalidResponseException
 	{
+		// TODO!
+
 		KohlchanChanLocator locator = KohlchanChanLocator.get(this);
 		UrlEncodedEntity entity = new UrlEncodedEntity("report", "1", "board", data.boardName,
 				"reason", StringUtils.emptyIfNull(data.comment), "json_response", "1");
