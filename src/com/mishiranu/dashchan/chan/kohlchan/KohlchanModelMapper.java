@@ -1,14 +1,14 @@
 package com.mishiranu.dashchan.chan.kohlchan;
 
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.net.Uri;
-
-import chan.content.model.EmbeddedAttachment;
 import chan.content.model.FileAttachment;
 import chan.content.model.Post;
 import chan.content.model.Posts;
@@ -17,23 +17,43 @@ import chan.util.StringUtils;
 
 public class KohlchanModelMapper
 {
-	public static FileAttachment createFileAttachment(JSONObject jsonObject, KohlchanChanLocator locator,
-			String boardName) throws JSONException
+	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+	private static final Pattern PATTERN_EXTENDED_ISO8601 = Pattern.compile("(....-..-..T..:..:..)(.\\d+)?(Z|\\+..:..)");
+
+	private static long iso8601ToEpochMs(String timestamp) throws JSONException
+	{
+		Matcher matcher = PATTERN_EXTENDED_ISO8601.matcher(timestamp);
+		if (!matcher.matches())
+			throw new JSONException("invalid date: " + timestamp);
+
+		try
+		{
+			return TIME_FORMAT.parse(
+					matcher.group(1) + matcher.group(3).replace("Z", "+00:00")
+							.replace(":", "")
+			).getTime();
+		}
+		catch (ParseException e)
+		{
+			throw new JSONException("invalid date: " + timestamp);
+		}
+	}
+
+	public static FileAttachment createFileAttachment(JSONObject jsonObject, KohlchanChanLocator locator) throws JSONException
 	{
 		FileAttachment attachment = new FileAttachment();
-		String tim = CommonUtils.getJsonString(jsonObject, "tim");
-		String filename = CommonUtils.getJsonString(jsonObject, "filename");
-		String ext = CommonUtils.getJsonString(jsonObject, "ext");
-		attachment.setSize(jsonObject.optInt("fsize"));
-		attachment.setWidth(jsonObject.optInt("w"));
-		attachment.setHeight(jsonObject.optInt("h"));
-		attachment.setFileUri(locator, locator.buildPath(boardName, "src", tim + ext));
-		attachment.setThumbnailUri(locator, locator.buildPath(boardName, "thumb", tim + ".png"));
-		attachment.setOriginalName(filename);
+		String thumbPath = CommonUtils.getJsonString(jsonObject, "thumb");
+		String path = CommonUtils.getJsonString(jsonObject, "path");
+		attachment.setThumbnailUri(locator, locator.buildPath(thumbPath));
+		attachment.setFileUri(locator, locator.buildPath(path));
+		attachment.setOriginalName(CommonUtils.getJsonString(jsonObject, "originalName"));
+		attachment.setSize(jsonObject.optInt("size"));
+		attachment.setWidth(jsonObject.optInt("width"));
+		attachment.setHeight(jsonObject.optInt("height"));
 		return attachment;
 	}
 
-	public static Post createPost(JSONObject jsonObject, KohlchanChanLocator locator, String boardName)
+	public static Post createPost(JSONObject jsonObject, KohlchanChanLocator locator)
 			throws JSONException
 	{
 		Post post = new Post();
@@ -45,7 +65,10 @@ public class KohlchanModelMapper
 		post.setPostNumber(CommonUtils.optJsonString(jsonObject, "postId",
 				CommonUtils.optJsonString(jsonObject, "threadId")));
 
-		// TODO: post.setTimestamp(CommonUtils.optJsonString(jsonObject, "creation"));
+		String timestamp =  CommonUtils.optJsonString(jsonObject, "creation");
+		if(!StringUtils.isEmpty(timestamp))
+			post.setTimestamp(iso8601ToEpochMs(timestamp));
+
 		String name = CommonUtils.optJsonString(jsonObject, "name");
 		if (name != null)
 		{
@@ -56,70 +79,32 @@ public class KohlchanModelMapper
 		post.setIdentifier(CommonUtils.optJsonString(jsonObject, "id"));
 		post.setCapcode(CommonUtils.optJsonString(jsonObject, "capcode"));
 		String email = CommonUtils.optJsonString(jsonObject, "email");
-		if (!StringUtils.isEmpty(email) && email.equalsIgnoreCase("sage")) post.setSage(true);
-		else post.setEmail(email);
-		String sub = CommonUtils.optJsonString(jsonObject, "sub");
-		if (sub != null)
-		{
-			sub = StringUtils.nullIfEmpty(StringUtils.clearHtml(sub).trim());
-			post.setSubject(sub);
-		}
-		String com = CommonUtils.optJsonString(jsonObject, "com");
-		if (com != null)
-		{
-			// Vichan JSON API bug, sometimes comment is broken
-			com = com.replace("<a  ", "<a ").replaceAll("href=\"\\?", "href=\"");
-			post.setComment(com);
-		}
-		String embed = StringUtils.nullIfEmpty(CommonUtils.optJsonString(jsonObject, "embed"));
-		if (embed != null)
-		{
-			EmbeddedAttachment attachment = EmbeddedAttachment.obtain(embed);
-			if (attachment == null)
-			{
-				if (embed.contains("embed.pleer.com"))
-				{
-					int index1 = embed.indexOf("track?id=");
-					int index2 = embed.indexOf("&t=", index1);
-					if (index2 > index1 && index1 >= 0)
-					{
-						String embeddedCode = embed.substring(index1 + 9, index2);
-						Uri fileUri = embeddedCode.length() > 14 ? Uri.parse("http://embed.pleer.com/track?id="
-								+ embeddedCode) : Uri.parse("http://pleer.com/tracks/" + embeddedCode);
-						attachment = new EmbeddedAttachment(fileUri, null, "ProstoPleer",
-								EmbeddedAttachment.ContentType.AUDIO, true, "ProstoPleer_" + embeddedCode + ".mp3");
-					}
-				}
-			}
-			if (attachment != null) post.setAttachments(attachment);
-		}
+		if (!StringUtils.isEmpty(email) && email.equalsIgnoreCase("sage"))
+			post.setSage(true);
 		else
-		{
-			try
-			{
-				ArrayList<FileAttachment> attachments = new ArrayList<>();
-				attachments.add(createFileAttachment(jsonObject, locator, boardName));
-				JSONArray filesArray = jsonObject.optJSONArray("extra_files");
-				if (filesArray != null)
-				{
-					for (int i = 0; i < filesArray.length(); i++)
-					{
-						JSONObject fileObject = filesArray.getJSONObject(i);
-						FileAttachment attachment = createFileAttachment(fileObject, locator, boardName);
-						attachments.add(attachment);
-					}
-				}
-				post.setAttachments(attachments);
-			}
-			catch (JSONException e)
-			{
+			post.setEmail(email);
 
+		String sub = CommonUtils.optJsonString(jsonObject, "subject");
+		post.setSubject(StringUtils.nullIfEmpty(StringUtils.clearHtml(sub).trim()));
+
+		post.setComment(CommonUtils.optJsonString(jsonObject, "markdown"));
+
+		JSONArray filesArray = jsonObject.optJSONArray("files");
+		if (filesArray != null)
+		{
+			FileAttachment[] attachments = new FileAttachment[filesArray.length()];
+			for (int i = 0; i < filesArray.length(); i++)
+			{
+				JSONObject fileObject = filesArray.getJSONObject(i);
+				attachments[i] = createFileAttachment(fileObject, locator);
 			}
+			post.setAttachments(attachments);
 		}
+
 		return post;
 	}
 
-	public static Posts createThread(JSONObject jsonObject, KohlchanChanLocator locator, String boardName,
+	public static Posts createThread(JSONObject jsonObject, KohlchanChanLocator locator,
                                      boolean fromCatalog) throws JSONException
 	{
 		Post[] posts;
@@ -127,26 +112,30 @@ public class KohlchanModelMapper
 		int filesCount = 0;
 		if (fromCatalog)
 		{
-			Post post = createPost(jsonObject, locator, boardName);
-			postsCount = jsonObject.getInt("replies") + 1;
-			filesCount = jsonObject.getInt("omitted_images") + jsonObject.getInt("images");
-			filesCount += post.getAttachmentsCount();
+			Post post = createPost(jsonObject, locator);
+			post.setThreadNumber(post.getPostNumber());
+			//TODO: Set thumb as icon
+			postsCount = jsonObject.optInt("postCount");
+			filesCount = jsonObject.optInt("fileCount");
+
 			posts = new Post[] {post};
 		}
 		else
 		{
 			JSONArray jsonArray = jsonObject.getJSONArray("posts");
-			posts = new Post[jsonArray.length()];
-			for (int i = 0; i < posts.length; i++)
+			posts = new Post[jsonArray.length() + 1];
+
+			posts[0] = createPost(jsonObject, locator);
+			posts[0].setThreadNumber(posts[0].getPostNumber());
+			postsCount = posts.length + jsonObject.optInt("ommitedPosts" /*sic*/, 0);
+			filesCount = 0; // missing :<
+			filesCount += posts[0].getAttachmentsCount();
+
+			for (int i = 0; i < posts.length - 1; i++)
 			{
-				jsonObject = jsonArray.getJSONObject(i);
-				posts[i] = createPost(jsonObject, locator, boardName);
-				if (i == 0)
-				{
-					postsCount = jsonObject.getInt("replies") + 1;
-					filesCount = jsonObject.getInt("omitted_images") + jsonObject.getInt("images");
-					filesCount += posts[0].getAttachmentsCount();
-				}
+				posts[i + 1] = createPost(jsonArray.getJSONObject(i), locator);
+				posts[i + 1].setThreadNumber(posts[0].getThreadNumber());
+				posts[i + 1].setParentPostNumber(posts[0].getPostNumber());
 			}
 		}
 		return new Posts(posts).addPostsCount(postsCount).addFilesCount(filesCount);

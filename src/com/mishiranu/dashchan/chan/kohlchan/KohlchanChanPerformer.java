@@ -42,7 +42,7 @@ public class KohlchanChanPerformer extends ChanPerformer
 				for (int i = 0; i < threads.length; i++)
 				{
 					threads[i] = KohlchanModelMapper.createThread(threadsArray.getJSONObject(i),
-							locator, data.boardName, false);
+							locator,false);
 				}
 				return new ReadThreadsResult(threads);
 			}
@@ -65,12 +65,8 @@ public class KohlchanChanPerformer extends ChanPerformer
 					ArrayList<Posts> threads = new ArrayList<>();
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						JSONArray threadsArray = jsonArray.getJSONObject(i).getJSONArray("threads");
-						for (int j = 0; j < threadsArray.length(); j++)
-						{
-							threads.add(KohlchanModelMapper.createThread(threadsArray.getJSONObject(j),
-									locator, data.boardName, true));
-						}
+						threads.add(KohlchanModelMapper.createThread(jsonArray.getJSONObject(i),
+								locator, true));
 					}
 					return new ReadThreadsResult(threads);
 				}
@@ -95,18 +91,7 @@ public class KohlchanChanPerformer extends ChanPerformer
 		{
 			try
 			{
-				JSONArray jsonArray = jsonObject.getJSONArray("posts");
-				if (jsonArray.length() > 0)
-				{
-					Post[] posts = new Post[jsonArray.length()];
-					for (int i = 0; i < posts.length; i++)
-					{
-						posts[i] = KohlchanModelMapper.createPost(jsonArray.getJSONObject(i),
-								locator, data.boardName);
-					}
-					return new ReadPostsResult(posts);
-				}
-				return null;
+				return new ReadPostsResult(KohlchanModelMapper.createThread(jsonObject, locator, false));
 			}
 			catch (JSONException e)
 			{
@@ -151,46 +136,6 @@ public class KohlchanChanPerformer extends ChanPerformer
 			}
 		}
 		throw new InvalidResponseException();
-	}
-
-	@Override
-	public ReadContentResult onReadContent(ReadContentData data) throws HttpException, InvalidResponseException
-	{
-		String host = data.uri.getHost();
-		if ("pleer.com".equals(host) || "embed.pleer.com".equals(host))
-		{
-			String id;
-			String embeddedId = data.uri.getQueryParameter("id");
-			if (embeddedId != null)
-			{
-				Uri uri = Uri.parse("http://embed.pleer.com/track_content?id=" + embeddedId);
-				String responseText = new HttpRequest(uri, data.holder, data).read().getString();
-				int index1 = responseText.indexOf("pleer.com/tracks/");
-				int index2 = responseText.indexOf("'", index1);
-				if (index2 > index1 && index1 >= 0) id = responseText.substring(index1 + 17, index2);
-				else throw new InvalidResponseException();
-			}
-			else id = data.uri.getLastPathSegment();
-			Uri uri = Uri.parse("http://pleer.com/site_api/files/get_url");
-			JSONObject jsonObject = new HttpRequest(uri, data.holder, data)
-					.setPostMethod(new UrlEncodedEntity("action", "download", "id", id)).read().getJsonObject();
-			if (jsonObject == null) throw new InvalidResponseException();
-			String uriString;
-			try
-			{
-				uriString = CommonUtils.getJsonString(jsonObject, "track_link");
-			}
-			catch (JSONException e)
-			{
-				throw new InvalidResponseException(e);
-			}
-			if (uriString != null)
-			{
-				return new ReadContentResult(new HttpRequest(Uri.parse(uriString), data.holder, data).read());
-			}
-			throw HttpException.createNotFoundException();
-		}
-		return super.onReadContent(data);
 	}
 
 	@Override
