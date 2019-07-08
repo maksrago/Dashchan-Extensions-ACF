@@ -84,13 +84,20 @@ public class KohlchanModelMapper
 		}
 		post.setTripcode(CommonUtils.optJsonString(jsonObject, "trip"));
 		post.setIdentifier(CommonUtils.optJsonString(jsonObject, "id"));
-		post.setCapcode(CommonUtils.optJsonString(jsonObject, "capcode"));
+		post.setCapcode(CommonUtils.optJsonString(jsonObject, "signedRole"));
 		String email = CommonUtils.optJsonString(jsonObject, "email");
-		if (!StringUtils.isEmpty(email) && email.equalsIgnoreCase("sage"))
-			post.setSage(true);
-		else
-			post.setEmail(email);
-
+		if (!StringUtils.isEmpty(email))
+		{
+			if (email.equalsIgnoreCase("sage"))
+				post.setSage(true);
+			else
+				post.setEmail(email);
+		}
+		if (jsonObject.optBoolean("autoSage")) // OP only
+		{
+			post.setSage(true); // ignored by DashChan
+			post.setCapcode((post.getCapcode() != null ? post.getCapcode() + " " : "") + "(autosäge)");
+		}
 		String sub = CommonUtils.optJsonString(jsonObject, "subject");
 		post.setSubject(StringUtils.nullIfEmpty(StringUtils.clearHtml(sub).trim()));
 
