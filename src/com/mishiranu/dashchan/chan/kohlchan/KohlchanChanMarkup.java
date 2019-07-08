@@ -11,32 +11,35 @@ import chan.text.CommentEditor;
 public class KohlchanChanMarkup extends ChanMarkup
 {
 	private static final int SUPPORTED_TAGS = TAG_BOLD | TAG_ITALIC | TAG_UNDERLINE | TAG_STRIKE | TAG_SPOILER
-			| TAG_CODE;
+			| TAG_CODE | TAG_HEADING;
 
 	public KohlchanChanMarkup()
 	{
-        addTag("strong", TAG_BOLD);
-        addTag("em", TAG_ITALIC);
-		addTag("span", "quote", TAG_QUOTE);
-        addTag("span", "spoiler", TAG_SPOILER);
-        addTag("code", TAG_CODE);
-        addTag("span", "style", "text-decoration: underline", TAG_UNDERLINE);
-        addTag("span", "style", "text-decoration: line-through", TAG_STRIKE);
-        addPreformatted("code", true);
+		addTag("strong", TAG_BOLD);
+		addTag("em", TAG_ITALIC);
+		addTag("span", "greenText", TAG_QUOTE);
+		addTag("span", "redText", TAG_HEADING);
+		addTag("span", "spoiler", TAG_SPOILER);
+		addTag("code", TAG_CODE);
+		addTag("u", TAG_UNDERLINE);
+		addTag("s", TAG_STRIKE);
+		addPreformatted("code", true);
 	}
 
 	@Override
 	public CommentEditor obtainCommentEditor(String boardName)
 	{
-	    // kohlchan Tags
+		// kohlchan Tags
 		CommentEditor commentEditor = new CommentEditor.BulletinBoardCodeCommentEditor();
-		commentEditor.addTag(TAG_BOLD, "[b]", "[/b]");
-		commentEditor.addTag(TAG_ITALIC, "[i]", "[/i]");
-        commentEditor.addTag(TAG_UNDERLINE, "[u]", "[/u]");
-        commentEditor.addTag(TAG_STRIKE, "[s]", "[/s]");
-        commentEditor.addTag(TAG_SPOILER, "[spoiler]", "[/spoiler]");
-        commentEditor.addTag(TAG_CODE, "[code]", "[/code]");
-        commentEditor.addTag(TAG_QUOTE, ">", "");
+		commentEditor.addTag(TAG_BOLD, "'''", "'''");
+		commentEditor.addTag(TAG_ITALIC, "''", "''");
+		commentEditor.addTag(TAG_UNDERLINE, "__", "__");
+		commentEditor.addTag(TAG_STRIKE, "~~", "~~");
+		commentEditor.addTag(TAG_HEADING, "==", "==");
+		commentEditor.addTag(TAG_SPOILER, "[spoiler]", "[/spoiler]");
+		commentEditor.addTag(TAG_CODE, "[code]", "[/code]");
+		commentEditor.addTag(TAG_QUOTE, ">", "");
+		//commentEditor.addTag(TAG_RED, "<", "");
 		return commentEditor;
 	}
 

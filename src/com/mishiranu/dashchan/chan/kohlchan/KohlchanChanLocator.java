@@ -11,13 +11,18 @@ public class KohlchanChanLocator extends ChanLocator
 {
 	private static final Pattern BOARD_PATH = Pattern.compile("/\\w+(?:/(?:(?:catalog|index|\\d+)\\.html)?)?");
 	private static final Pattern THREAD_PATH = Pattern.compile("/\\w+/res/(\\d+)\\.html");
-	private static final Pattern ATTACHMENT_PATH = Pattern.compile("/\\w+/src/\\d+\\.\\w+");
+	private static final Pattern ATTACHMENT_PATH = Pattern.compile("/\\.media/.+");
 
 	public KohlchanChanLocator()
 	{
 		addChanHost("kohlchan.net");
 		addConvertableChanHost("www.kohlchan.net");
-		setHttpsMode(HttpsMode.CONFIGURABLE);
+		addConvertableChanHost("kohlchan.mett.ru");
+		addConvertableChanHost("nocsp.kohlchan.net");
+		addConvertableChanHost("kohl.chan");
+		addConvertableChanHost("kohlchan7cwtdwfuicqhxgqx4k47bsvlt2wn5eduzovntrzvonv4cqyd.onion");
+		addConvertableChanHost("fastkohlt5rxcxtl5no7k3efmahlt7mafry7be6yvxdovekhq2hdnwqd.onion");
+		setHttpsMode(HttpsMode.HTTPS_ONLY);
 	}
 
 	@Override
