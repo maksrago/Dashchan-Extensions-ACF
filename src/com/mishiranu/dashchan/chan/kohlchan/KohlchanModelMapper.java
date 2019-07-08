@@ -69,7 +69,6 @@ public class KohlchanModelMapper
 		post.setClosed(jsonObject.optBoolean("locked"));
 		post.setCyclical(jsonObject.optBoolean("cyclic"));
 		post.setArchived(jsonObject.optBoolean("archived"));
-		post.setPosterBanned(jsonObject.has("banMessage"));
 		post.setPostNumber(CommonUtils.optJsonString(jsonObject, "postId",
 				CommonUtils.optJsonString(jsonObject, "threadId")));
 
@@ -98,6 +97,13 @@ public class KohlchanModelMapper
 		{
 			post.setSage(true); // ignored by DashChan
 			post.setCapcode((post.getCapcode() != null ? post.getCapcode() + " " : "") + "(autosäge)");
+		}
+
+		String banMessage = CommonUtils.optJsonString(jsonObject,"banMessage");
+		if (!StringUtils.isEmpty(banMessage))
+		{
+			post.setPosterBanned(true);
+			post.setCapcode((post.getCapcode() != null ? post.getCapcode() + " " : "") + banMessage);
 		}
 
 
