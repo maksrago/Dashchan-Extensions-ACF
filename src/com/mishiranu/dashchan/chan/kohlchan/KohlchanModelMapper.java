@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import chan.content.model.FileAttachment;
+import chan.content.model.Icon;
 import chan.content.model.Post;
 import chan.content.model.Posts;
 import chan.util.CommonUtils;
@@ -98,6 +99,15 @@ public class KohlchanModelMapper
 			post.setSage(true); // ignored by DashChan
 			post.setCapcode((post.getCapcode() != null ? post.getCapcode() + " " : "") + "(autosäge)");
 		}
+
+
+		String flag = CommonUtils.optJsonString(jsonObject, "flag");
+		CommonUtils.writeLog("flag: ", flag);
+		if (!StringUtils.isEmpty(flag))
+			post.setIcons(new Icon(locator, locator.buildPath(flag),
+					jsonObject.optString("flagName")));
+
+
 		String sub = CommonUtils.optJsonString(jsonObject, "subject");
 		post.setSubject(StringUtils.nullIfEmpty(StringUtils.clearHtml(sub).trim()));
 
