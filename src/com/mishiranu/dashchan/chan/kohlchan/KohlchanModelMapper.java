@@ -37,13 +37,15 @@ public class KohlchanModelMapper
 			throws JSONException
 	{
 		Post post = new Post();
-		if (jsonObject.optInt("sticky") != 0) post.setSticky(true);
-		if (jsonObject.optInt("locked") != 0) post.setClosed(true);
-		String no = CommonUtils.getJsonString(jsonObject, "no");
-		String resto = CommonUtils.getJsonString(jsonObject, "resto");
-		post.setPostNumber(no);
-		if (!"0".equals(resto)) post.setParentPostNumber(resto);
-		post.setTimestamp(jsonObject.getLong("time") * 1000L);
+		post.setSticky(jsonObject.optBoolean("pinned"));
+		post.setClosed(jsonObject.optBoolean("locked"));
+		post.setCyclical(jsonObject.optBoolean("cyclic"));
+		post.setArchived(jsonObject.optBoolean("archived"));
+		post.setPosterBanned(jsonObject.has("banMessage"));
+		post.setPostNumber(CommonUtils.optJsonString(jsonObject, "postId",
+				CommonUtils.optJsonString(jsonObject, "threadId")));
+
+		// TODO: post.setTimestamp(CommonUtils.optJsonString(jsonObject, "creation"));
 		String name = CommonUtils.optJsonString(jsonObject, "name");
 		if (name != null)
 		{

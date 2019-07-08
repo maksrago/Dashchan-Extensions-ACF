@@ -29,7 +29,7 @@ public class KohlchanChanPerformer extends ChanPerformer
 	{
 		KohlchanChanLocator locator = KohlchanChanLocator.get(this);
 		Uri uri = locator.buildPath(data.boardName, (data.isCatalog() ? "catalog"
-				: Integer.toString(data.pageNumber)) + ".json");
+				: Integer.toString(data.pageNumber + 1 )) + ".json");
 		HttpResponse response = new HttpRequest(uri, data.holder, data).setValidator(data.validator).read();
 		JSONObject jsonObject = response.getJsonObject();
 		JSONArray jsonArray = response.getJsonArray();
@@ -120,7 +120,7 @@ public class KohlchanChanPerformer extends ChanPerformer
 	public ReadBoardsResult onReadBoards(ReadBoardsData data) throws HttpException, InvalidResponseException
 	{
 		KohlchanChanLocator locator = KohlchanChanLocator.get(this);
-		Uri uri = locator.buildPath("b", "");
+		Uri uri = locator.buildPath(".static/pages", "sidebar.html");
 		String responseText = new HttpRequest(uri, data.holder, data).read().getString();
 		try
 		{
