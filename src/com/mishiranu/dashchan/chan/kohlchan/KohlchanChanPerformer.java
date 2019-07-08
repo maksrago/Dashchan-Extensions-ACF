@@ -142,106 +142,74 @@ public class KohlchanChanPerformer extends ChanPerformer
 	public SendPostResult onSendPost(SendPostData data) throws HttpException, ApiException, InvalidResponseException
 	{
 		MultipartEntity entity = new MultipartEntity();
-		entity.add("board", data.boardName);
-		entity.add("thread", data.threadNumber);
+		entity.add("boardUri", data.boardName);
+		entity.add("threadId", data.threadNumber);
 		entity.add("name", data.name);
-		entity.add("email", data.optionSage ? "sage" : data.email);
 		entity.add("subject", data.subject);
-		entity.add("body", StringUtils.emptyIfNull(data.comment));
+		entity.add("message", StringUtils.emptyIfNull(data.comment));
 		entity.add("password", data.password);
+		if(data.optionSage) entity.add("sage", "true");
+		if(data.optionSpoiler) entity.add("spoiler", "true");
+
 		if (data.attachments != null)
 		{
+
 			for (int i = 0; i < data.attachments.length; i++)
 			{
 				SendPostData.Attachment attachment = data.attachments[i];
-				attachment.addToEntity(entity, "file" + (i > 0 ? i + 1 : ""));
+				entity.add("fileName", attachment.getFileName());
+				entity.add("fileMime", attachment.getMimeType());
+				attachment.addToEntity(entity, "files");
 			}
 		}
-		entity.add("json_response", "1");
 
 		KohlchanChanLocator locator = KohlchanChanLocator.get(this);
 		Uri contentUri = data.threadNumber != null ? locator.createThreadUri(data.boardName, data.threadNumber)
 				: locator.createBoardUri(data.boardName, 0);
-		String responseText = new HttpRequest(contentUri, data.holder).read().getString();
-		try
-		{
-			AntispamFieldsParser.parseAndApply(responseText, entity, "board", "thread", "name", "email",
-					"subject", "body", "password", "file", "json_response");
-		}
-		catch (ParseException e)
-		{
-			throw new InvalidResponseException();
-		}
-		Uri uri = locator.buildPath("post.php");
+		Uri uri = locator.buildPath(data.threadNumber != null ? "/replyThread.js?json=1" : "/newThread.js");
 		JSONObject jsonObject = new HttpRequest(uri, data.holder, data).setPostMethod(entity).addHeader("Referer",
 				contentUri.toString()).setRedirectHandler(HttpRequest.RedirectHandler.STRICT).read().getJsonObject();
 		if (jsonObject == null) throw new InvalidResponseException();
 
-		String redirect = jsonObject.optString("redirect");
-		if (!StringUtils.isEmpty(redirect))
+		String status = jsonObject.optString("status");
+		String response = jsonObject.optString("data");
+		if ("ok".equals(status))
 		{
-			uri = locator.buildPath(redirect);
-			String threadNumber = locator.getThreadNumber(uri);
-			String postNumber = locator.getPostNumber(uri);
+			String postNumber = response;
+			if(postNumber.isEmpty()) throw new InvalidResponseException();
+			String threadNumber = data.threadNumber != null ? data.threadNumber : postNumber;
 			return new SendPostResult(threadNumber, postNumber);
-		}
-		String errorMessage = jsonObject.optString("error");
-		if (errorMessage != null)
+		} else if(!"error".equals(status))
+			throw new InvalidResponseException();
+
+		int errorType = 0;
+		if (response.contains("Either a message or a file is required"))
+			errorType = ApiException.SEND_ERROR_EMPTY_COMMENT;
+		else if (response.contains("This board requires at least one file when creating threads."))
+			errorType = ApiException.SEND_ERROR_EMPTY_FILE;
+		else if (response.contains("This board is locked"))
+			errorType = ApiException.SEND_ERROR_CLOSED;
+		else if (response.contains("Board not found"))
+			errorType = ApiException.SEND_ERROR_NO_BOARD;
+		else if (response.contains("Thread not found"))
+			errorType = ApiException.SEND_ERROR_NO_THREAD;
+		else if (response.contains("A file had a format that is not allowed"))
+			errorType = ApiException.SEND_ERROR_FILE_NOT_SUPPORTED;
+		else if (response.contains("A file sent was too large"))
+			errorType = ApiException.SEND_ERROR_FILE_TOO_BIG;
+		else if (response.contains("Banned file"))
+			errorType = ApiException.SEND_ERROR_FILE_EXISTS;
+		else if (response.contains("banned"))
+			errorType = ApiException.SEND_ERROR_BANNED;
+		else if (response.contains("Flood detected"))
+			errorType = ApiException.SEND_ERROR_TOO_FAST;
+		else
 		{
-			int errorType = 0;
-			if (errorMessage.contains("The body was too short or empty"))
-			{
-				errorType = ApiException.SEND_ERROR_EMPTY_COMMENT;
-			}
-			else if (errorMessage.contains("You must upload an image"))
-			{
-				errorType = ApiException.SEND_ERROR_EMPTY_FILE;
-			}
-			else if (errorMessage.contains("was too long"))
-			{
-				errorType = ApiException.SEND_ERROR_FIELD_TOO_LONG;
-			}
-			else if (errorMessage.contains("The file was too big") || errorMessage.contains("is longer than"))
-			{
-				errorType = ApiException.SEND_ERROR_FILE_TOO_BIG;
-			}
-			else if (errorMessage.contains("Thread locked"))
-			{
-				errorType = ApiException.SEND_ERROR_CLOSED;
-			}
-			else if (errorMessage.contains("Invalid board"))
-			{
-				errorType = ApiException.SEND_ERROR_NO_BOARD;
-			}
-			else if (errorMessage.contains("Thread specified does not exist"))
-			{
-				errorType = ApiException.SEND_ERROR_NO_THREAD;
-			}
-			else if (errorMessage.contains("Unsupported image format"))
-			{
-				errorType = ApiException.SEND_ERROR_FILE_NOT_SUPPORTED;
-			}
-			else if (errorMessage.contains("Maximum file size"))
-			{
-				errorType = ApiException.SEND_ERROR_FILE_TOO_BIG;
-			}
-			else if (errorMessage.contains("Your IP address is"))
-			{
-				errorType = ApiException.SEND_ERROR_BANNED;
-			}
-			else if (errorMessage.contains("That file"))
-			{
-				errorType = ApiException.SEND_ERROR_FILE_EXISTS;
-			}
-			else if (errorMessage.contains("Flood detected"))
-			{
-				errorType = ApiException.SEND_ERROR_TOO_FAST;
-			}
-			if (errorType != 0) throw new ApiException(errorType);
-			CommonUtils.writeLog("kohlchan send message", errorMessage);
-			throw new ApiException(errorMessage);
+			CommonUtils.writeLog("Unknown post error received: ", response);
+			throw new ApiException(response);
 		}
-		throw new InvalidResponseException();
+
+		throw new ApiException(errorType);
 	}
 
 	@Override
@@ -249,32 +217,35 @@ public class KohlchanChanPerformer extends ChanPerformer
 			InvalidResponseException
 	{
 		KohlchanChanLocator locator = KohlchanChanLocator.get(this);
-		UrlEncodedEntity entity = new UrlEncodedEntity("delete", "1", "board", data.boardName,
-				"password", data.password, "json_response", "1");
-		for (String postNumber : data.postNumbers) entity.add("delete_" + postNumber, "1");
-		if (data.optionFilesOnly) entity.add("file", "on");
-		Uri uri = locator.buildPath("post.php");
+		MultipartEntity entity = new MultipartEntity();
+		entity.add("password", data.password);
+		entity.add("action", "delete");
+		for (String postNumber : data.postNumbers)
+			entity.add(data.boardName + "-" + data.threadNumber + "-" + postNumber, "true");
+		if (data.optionFilesOnly)
+		{
+			// "deleteMedia" times out (too expensive?)
+			entity.add("deleteUploads", "true");
+		}
+		Uri uri = locator.buildPath("/contentActions.js?json=1");
 		JSONObject jsonObject = new HttpRequest(uri, data.holder, data).setPostMethod(entity)
 				.setRedirectHandler(HttpRequest.RedirectHandler.STRICT).read().getJsonObject();
-		if (jsonObject == null) throw new InvalidResponseException();
-		if (jsonObject.optBoolean("success")) return null;
-		String errorMessage = jsonObject.optString("error");
-		if (errorMessage != null)
+
+		String status = jsonObject.optString("status");
+		if ("ok".equals(status))
 		{
-			int errorType = 0;
-			if (errorMessage.contains("Wrong password"))
-			{
-				errorType = ApiException.DELETE_ERROR_PASSWORD;
-			}
-			else if (errorMessage.contains("You'll have to wait"))
-			{
-				errorType = ApiException.DELETE_ERROR_TOO_NEW;
-			}
-			if (errorType != 0) throw new ApiException(errorType);
-			CommonUtils.writeLog("kohlchan delete message", errorMessage);
-			throw new ApiException(errorMessage);
-		}
-		throw new InvalidResponseException();
+			JSONObject response = jsonObject.optJSONObject("data");
+			if (response != null && response.optInt("removedThreads") == 0
+					&& response.optInt("removedPosts") == 0)
+				throw new ApiException(ApiException.DELETE_ERROR_PASSWORD); // can't tell why it failed
+
+			return null;
+		} else if(!"error".equals(status))
+			throw new InvalidResponseException();
+
+		String response = jsonObject.optString("data");
+		CommonUtils.writeLog("Delete post failed: ", response);
+		throw new ApiException(response);
 	}
 
 	@Override
