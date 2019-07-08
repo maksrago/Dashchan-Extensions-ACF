@@ -112,7 +112,7 @@ public class KohlchanModelMapper
 	}
 
 	public static Posts createThread(JSONObject jsonObject, KohlchanChanLocator locator,
-                                     boolean fromCatalog) throws JSONException
+									 boolean fromCatalog) throws JSONException
 	{
 		Post[] posts;
 		int postsCount = 0;
