@@ -6,7 +6,7 @@ Extension for kohlchan.net
 
 | Chan Name       | Host                 | Extension Package Link                                                                                                                |
 | :-------------: | :------------------: | :-----------------------------------------------------------------------------------------------------------------------------------: |
-| Kohlchan        | Kohlchan.net         | [Dashchan-Extensions-kohlchan-release.apk](https://github.com/krautbernd/Files/raw/master/Dashchan-Extensions-kohlchan-release.apk)                        |
+| Kohlchan        | Kohlchan.net         | [Dashchan-kohlchan-debug.apk](https://github.com/krautbernd/Files/raw/master/Dashchan-kohlchan-debug.apk)                        |
 
 ## Building Guide
 
