@@ -10,12 +10,12 @@ Extension for kohlchan.net
 
 ## Building Guide
 
-1. Install JDK 8 or higher
-2. Load with Android Studio 
-3. Build
+1. Load with Android Studio 3.4+
+2. Build
 
 #### not working
-* webm thumbnails
+* captchas
+* report
 
 ### Dashchan Client
 
