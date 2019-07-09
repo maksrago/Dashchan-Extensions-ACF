@@ -16,7 +16,6 @@ Extension for kohlchan.net
 
 #### not working
 * webm thumbnails
-* countryballs
 
 ### Dashchan Client
 

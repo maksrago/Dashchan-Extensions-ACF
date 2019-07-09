@@ -1,34 +1,31 @@
 buildscript {
 	repositories {
 		jcenter()
+		google()
 	}
 
 	dependencies {
-		classpath 'com.android.tools.build:gradle:2.3.1'
-		classpath 'me.tatarka:gradle-retrolambda:3.6.1'
-		classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
+		classpath 'com.android.tools.build:gradle:3.4.1'
 	}
-
-	configurations.classpath.exclude group: 'com.android.tools.external.lombok'
 }
 
 allprojects {
 	repositories {
 		jcenter()
+		google()
 	}
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 
 dependencies {
-	provided 'com.github.mishiranu:dashchan.library:+'
-	compile 'com.github.mishiranu:dashchan.static:+'
+	compileOnly 'com.github.mishiranu:dashchan.library:+'
+	api 'com.github.mishiranu:dashchan.static:+'
 }
 
 android {
-	compileSdkVersion 25
-	buildToolsVersion '25.0.3'
+	compileSdkVersion 26
+	buildToolsVersion '28.0.3'
 
 	sourceSets.main {
 		manifest.srcFile 'AndroidManifest.xml'
@@ -55,6 +52,11 @@ android {
 
 		buildTypes.debug.signingConfig signingConfigs.general
 		buildTypes.release.signingConfig signingConfigs.general
+	}
+
+	defaultConfig {
+		targetSdkVersion 26
+		minSdkVersion 16
 	}
 
 	buildTypes {

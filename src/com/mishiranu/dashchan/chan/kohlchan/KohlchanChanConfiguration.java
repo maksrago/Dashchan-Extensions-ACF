@@ -24,30 +24,30 @@ public class KohlchanChanConfiguration extends ChanConfiguration
 	@Override
 	public Posting obtainPostingConfiguration(String boardName, boolean newThread)
 	{
-	    // jpeg, jpg, bmp, gif, png,
-        // mp3, ogg, flac,
-        // webm, mp4,
-        // zip, pdf with maximum file size of 40MB in total for every post.
 		Posting posting = new Posting();
 		boolean namesAndEmails = !"layer".equals(boardName);
-		// posting.allowName = namesAndEmails;
-		// posting.allowTripcode = namesAndEmails;
-		// posting.allowEmail = namesAndEmails;
+		posting.allowName = false;
 		posting.allowSubject = true;
 		posting.optionSage = namesAndEmails;
+		posting.hasCountryFlags = "int".equals(boardName);
+
+		posting.attachmentSpoiler = true;
 		posting.attachmentCount = 4;
 		posting.attachmentMimeTypes.add("image/jpeg");
-        posting.attachmentMimeTypes.add("image/jpg");
-        posting.attachmentMimeTypes.add("image/bmp");
-        posting.attachmentMimeTypes.add("image/gif");
-        posting.attachmentMimeTypes.add("image/png");
+		posting.attachmentMimeTypes.add("image/jpg");
+		posting.attachmentMimeTypes.add("image/bmp");
+		posting.attachmentMimeTypes.add("image/gif");
+		posting.attachmentMimeTypes.add("image/png");
 		posting.attachmentMimeTypes.add("video/webm");
-        posting.attachmentMimeTypes.add("video/mp4");
-        posting.attachmentMimeTypes.add("audio/mp3");
-        posting.attachmentMimeTypes.add("audio/ogg");
-        posting.attachmentMimeTypes.add("audio/flac");
-        posting.attachmentMimeTypes.add("application/zip");
-        posting.attachmentMimeTypes.add("application/pdf");
+		posting.attachmentMimeTypes.add("video/mp4");
+		posting.attachmentMimeTypes.add("audio/mp3");
+		posting.attachmentMimeTypes.add("audio/ogg");
+		posting.attachmentMimeTypes.add("audio/flac");
+		posting.attachmentMimeTypes.add("audio/opus");
+		posting.attachmentMimeTypes.add("application/epub+zip");
+		posting.attachmentMimeTypes.add("application/zip");
+		posting.attachmentMimeTypes.add("application/pdf");
+		posting.attachmentMimeTypes.add("text/plain");
 		return posting;
 	}
 
