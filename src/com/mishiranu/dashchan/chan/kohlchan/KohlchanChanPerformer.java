@@ -173,14 +173,17 @@ public class KohlchanChanPerformer extends ChanPerformer
 
 		String status = jsonObject.optString("status");
 		String response = jsonObject.optString("data");
-		if ("ok".equals(status))
-		{
+		if ("ok".equals(status)) {
 			String postNumber = response;
-			if(postNumber.isEmpty()) throw new InvalidResponseException();
+			if (postNumber.isEmpty()) throw new InvalidResponseException();
 			String threadNumber = data.threadNumber != null ? data.threadNumber : postNumber;
 			return new SendPostResult(threadNumber, postNumber);
-		} else if(!"error".equals(status))
+		} else if("bypassable".equals(status)) {
+			throw new ApiException(ApiException.SEND_ERROR_CAPTCHA);
+		} else if(!"error".equals(status)) {
+			CommonUtils.writeLog("Unrecognised post reply status: ", status);
 			throw new InvalidResponseException();
+		}
 
 		int errorType = 0;
 		if (response.contains("Either a message or a file is required"))
@@ -232,43 +235,52 @@ public class KohlchanChanPerformer extends ChanPerformer
 				.setRedirectHandler(HttpRequest.RedirectHandler.STRICT).read().getJsonObject();
 
 		String status = jsonObject.optString("status");
-		if ("ok".equals(status))
-		{
+		if ("ok".equals(status)) {
 			JSONObject response = jsonObject.optJSONObject("data");
 			if (response != null && response.optInt("removedThreads") == 0
 					&& response.optInt("removedPosts") == 0)
 				throw new ApiException(ApiException.DELETE_ERROR_PASSWORD); // can't tell why it failed
 
 			return null;
-		} else if(!"error".equals(status))
+		} else if(!"error".equals(status)) {
+			CommonUtils.writeLog("Unrecognised post deletion status: ", status);
 			throw new InvalidResponseException();
+		}
 
 		String response = jsonObject.optString("data");
 		CommonUtils.writeLog("Delete post failed: ", response);
 		throw new ApiException(response);
 	}
 
+	//! This is currently broken. It relies on a CAPTCHA, but DashChan doesn't support that for reports.
 	@Override
 	public SendReportPostsResult onSendReportPosts(SendReportPostsData data) throws HttpException, ApiException,
 			InvalidResponseException
 	{
-		// TODO!
-
 		KohlchanChanLocator locator = KohlchanChanLocator.get(this);
-		UrlEncodedEntity entity = new UrlEncodedEntity("report", "1", "board", data.boardName,
-				"reason", StringUtils.emptyIfNull(data.comment), "json_response", "1");
-		for (String postNumber : data.postNumbers) entity.add("delete_" + postNumber, "1");
-		Uri uri = locator.buildPath("post.php");
+		MultipartEntity entity = new MultipartEntity();
+		entity.add("action", "report");
+		// TODO: entity.add("captcha", captchaValue);
+		entity.add("reason", data.comment);
+		for (String postNumber : data.postNumbers)
+			entity.add(data.boardName + "-" + data.threadNumber + "-" + postNumber, "true");
+		Uri uri = locator.buildPath("/contentActions.js?json=1");
 		JSONObject jsonObject = new HttpRequest(uri, data.holder, data).setPostMethod(entity)
 				.setRedirectHandler(HttpRequest.RedirectHandler.STRICT).read().getJsonObject();
-		if (jsonObject == null) throw new InvalidResponseException();
-		if (jsonObject.optBoolean("success")) return null;
-		String errorMessage = jsonObject.optString("error");
-		if (errorMessage != null)
-		{
-			CommonUtils.writeLog("kohlchan report message", errorMessage);
-			throw new ApiException(errorMessage);
+
+		String status = jsonObject.optString("status");
+		if ("ok".equals(status)) {
+			return null;
+		} else if (!"error".equals(status)) {
+			CommonUtils.writeLog("Unrecognised post reporting status: ", status);
+			throw new InvalidResponseException();
 		}
-		throw new InvalidResponseException();
+
+		String response = jsonObject.optString("data");
+		CommonUtils.writeLog("Report post failed: ", response);
+		if(response.contains("Wrong captcha"))
+			throw new ApiException(ApiException.SEND_ERROR_CAPTCHA); // XXX: Report, not send error
+		else
+			throw new ApiException(response);
 	}
 }

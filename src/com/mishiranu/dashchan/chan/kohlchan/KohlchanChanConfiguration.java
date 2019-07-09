@@ -17,7 +17,7 @@ public class KohlchanChanConfiguration extends ChanConfiguration
 		board.allowCatalog = true;
 		board.allowPosting = true;
 		board.allowDeleting = true;
-		board.allowReporting = true;
+		board.allowReporting = false; // See Performer: Needs CAPTCHA to report a post
 		return board;
 	}
 
