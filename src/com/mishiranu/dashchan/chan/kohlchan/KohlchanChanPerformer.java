@@ -166,7 +166,7 @@ public class KohlchanChanPerformer extends ChanPerformer
 		KohlchanChanLocator locator = KohlchanChanLocator.get(this);
 		Uri contentUri = data.threadNumber != null ? locator.createThreadUri(data.boardName, data.threadNumber)
 				: locator.createBoardUri(data.boardName, 0);
-		Uri uri = locator.buildPath(data.threadNumber != null ? "/replyThread.js?json=1" : "/newThread.js");
+		Uri uri = locator.buildPath(data.threadNumber != null ? "/replyThread.js?json=1" : "/newThread.js?json=1");
 		JSONObject jsonObject = new HttpRequest(uri, data.holder, data).setPostMethod(entity).addHeader("Referer",
 				contentUri.toString()).setRedirectHandler(HttpRequest.RedirectHandler.STRICT).read().getJsonObject();
 		if (jsonObject == null) throw new InvalidResponseException();
