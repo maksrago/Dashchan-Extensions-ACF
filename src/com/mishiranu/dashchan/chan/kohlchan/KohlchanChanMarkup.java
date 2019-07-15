@@ -30,6 +30,7 @@ public class KohlchanChanMarkup extends ChanMarkup
 	public CommentEditor obtainCommentEditor(String boardName)
 	{
 		// kohlchan Tags
+		// test comment
 		CommentEditor commentEditor = new CommentEditor.BulletinBoardCodeCommentEditor();
 		commentEditor.addTag(TAG_BOLD, "'''", "'''");
 		commentEditor.addTag(TAG_ITALIC, "''", "''");
