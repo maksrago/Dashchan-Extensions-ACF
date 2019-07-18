@@ -224,7 +224,7 @@ public class KohlchanChanPerformer extends ChanPerformer
 		entity.add("password", data.password);
 		entity.add("action", "delete");
 		for (String postNumber : data.postNumbers)
-			if(data.threadNumber == postNumber)
+			if(data.threadNumber.equals(postNumber))
 				entity.add(data.boardName + "-" + data.threadNumber, "true");
 			else
 				entity.add(data.boardName + "-" + data.threadNumber + "-" + postNumber, "true");

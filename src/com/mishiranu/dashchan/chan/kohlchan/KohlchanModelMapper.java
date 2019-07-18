@@ -1,5 +1,7 @@
 package com.mishiranu.dashchan.chan.kohlchan;
 
+import android.annotation.SuppressLint;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
@@ -18,6 +20,7 @@ import chan.util.StringUtils;
 
 public class KohlchanModelMapper
 {
+	@SuppressLint("SimpleDateFormat")
 	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 	private static final Pattern PATTERN_EXTENDED_ISO8601 = Pattern.compile("(....-..-..T..:..:..)(.\\d+)?(Z|\\+..:..)");
 
