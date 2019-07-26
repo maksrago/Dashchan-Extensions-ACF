@@ -109,18 +109,16 @@ public class KohlchanModelMapper
 			post.setCapcode((post.getCapcode() != null ? post.getCapcode() + " " : "") + banMessage);
 		}
 
-
 		String flag = CommonUtils.optJsonString(jsonObject, "flag");
 		CommonUtils.writeLog("flag: ", flag);
 		if (!StringUtils.isEmpty(flag))
 			post.setIcons(new Icon(locator, locator.buildPath(flag),
 					jsonObject.optString("flagName")));
 
-
 		String sub = CommonUtils.optJsonString(jsonObject, "subject");
 		post.setSubject(StringUtils.nullIfEmpty(StringUtils.clearHtml(sub).trim()));
 
-		post.setComment(CommonUtils.optJsonString(jsonObject, "markdown"));
+		post.setComment(linkify(CommonUtils.optJsonString(jsonObject, "markdown")));
 
 		JSONArray filesArray = jsonObject.optJSONArray("files");
 		if (filesArray != null)
@@ -172,5 +170,26 @@ public class KohlchanModelMapper
 			}
 		}
 		return new Posts(posts).addPostsCount(postsCount).addFilesCount(filesCount);
+	}
+
+	private static String linkify(String html) {
+		StringBuilder sb = new StringBuilder();
+		for (UrlScanner.Span span : UrlScanner.sliceInput(html)) {
+			String text = html.substring(span.beginIndex, span.endIndex);
+			if (span.type == UrlScanner.Type.kUrl) {
+				String url = text;
+				if (url.startsWith("https&#58;"))
+					url = "https:" + url.substring(10);
+				if (url.startsWith("http&#58;"))
+					url = "http:" + url.substring(9);
+				sb.append("<a href=\"");
+				sb.append(url);
+				sb.append("\">");
+				sb.append(text);
+				sb.append("</a>");
+			} else
+				sb.append(text);
+		}
+		return sb.toString();
 	}
 }
