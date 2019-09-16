@@ -11,7 +11,8 @@ A collection of Dashchan extensions for imageboards belonging to the [Alternate 
 
 | Chan Name       | Host                 | Extension Package Link                                                                                                                |
 | :-------------: | :------------------: | :-----------------------------------------------------------------------------------------------------------------------------------: |
-| 16chan        | 16chan.xyz         | [Dashchan-kohlchan-debug.apk](https://github.com/krautbernd/Dashchan-Extensions-kohlchan/releases/download/stable/Dashchan-kohlchan-debug.apk)                        |
+| 16chan        | [16chan.xyz](https://www.16chan.xyz/)         | [Dashchan-16chan.apk](https://github.com/maksrago/Dashchan-Extensions-ACF/releases/download/16chan/Dashchan-16chan.apk)                        |
+|Spacechan|[spacechan.xyz](https://spacechan.xyz/)|[Dashchan-Spacechan.apk](https://github.com/maksrago/Dashchan-Extensions-ACF/releases/download/Spacechan/Dashchan-Spacechan.apk)|
 
 #### Not Currently Working
 * captchas
