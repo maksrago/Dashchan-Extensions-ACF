@@ -15,8 +15,8 @@ public class SixteenchanChanLocator extends ChanLocator
 
 	public SixteenchanChanLocator()
 	{
-		addChanHost("spacechan.xyz");
-		addConvertableChanHost("www.spacechan.xyz");
+		addChanHost("16chan.xyz");
+		addConvertableChanHost("www.16chan.xyz");
 		setHttpsMode(HttpsMode.HTTPS_ONLY);
 	}
 
