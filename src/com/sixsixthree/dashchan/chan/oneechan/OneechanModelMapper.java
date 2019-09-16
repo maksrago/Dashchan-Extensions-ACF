@@ -1,4 +1,4 @@
-package com.sixsixthree.dashchan.chan.sixteenchan;
+package com.sixsixthree.dashchan.chan.oneechan;
 
 import android.annotation.SuppressLint;
 
@@ -18,7 +18,7 @@ import chan.content.model.Posts;
 import chan.util.CommonUtils;
 import chan.util.StringUtils;
 
-public class SixteenchanModelMapper
+public class OneechanModelMapper
 {
 	@SuppressLint("SimpleDateFormat")
 	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
@@ -43,7 +43,7 @@ public class SixteenchanModelMapper
 		}
 	}
 
-	public static FileAttachment createFileAttachment(JSONObject jsonObject, SixteenchanChanLocator locator) throws JSONException
+	public static FileAttachment createFileAttachment(JSONObject jsonObject, OneechanChanLocator locator) throws JSONException
 	{
 		FileAttachment attachment = new FileAttachment();
 		String originalName = CommonUtils.getJsonString(jsonObject, "originalName");
@@ -64,7 +64,7 @@ public class SixteenchanModelMapper
 		return attachment;
 	}
 
-	public static Post createPost(JSONObject jsonObject, SixteenchanChanLocator locator)
+	public static Post createPost(JSONObject jsonObject, OneechanChanLocator locator)
 			throws JSONException
 	{
 		Post post = new Post();
@@ -135,7 +135,7 @@ public class SixteenchanModelMapper
 		return post;
 	}
 
-	public static Posts createThread(JSONObject jsonObject, SixteenchanChanLocator locator,
+	public static Posts createThread(JSONObject jsonObject, OneechanChanLocator locator,
 									 boolean fromCatalog) throws JSONException
 	{
 		Post[] posts;

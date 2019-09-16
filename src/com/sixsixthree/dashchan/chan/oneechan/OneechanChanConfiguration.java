@@ -1,10 +1,10 @@
-package com.sixsixthree.dashchan.chan.sixteenchan;
+package com.sixsixthree.dashchan.chan.oneechan;
 
 import chan.content.ChanConfiguration;
 
-public class SixteenchanChanConfiguration extends ChanConfiguration
+public class OneechanChanConfiguration extends ChanConfiguration
 {
-	public SixteenchanChanConfiguration()
+	public OneechanChanConfiguration()
 	{
 		request(OPTION_READ_POSTS_COUNT);
 	}
@@ -31,7 +31,7 @@ public class SixteenchanChanConfiguration extends ChanConfiguration
 		posting.hasCountryFlags = "int".equals(boardName);
 
 		posting.attachmentSpoiler = true;
-		posting.attachmentCount = 1;
+		posting.attachmentCount = 5;
 		posting.attachmentMimeTypes.add("image/jpeg");
 		posting.attachmentMimeTypes.add("image/jpg");
 		posting.attachmentMimeTypes.add("image/bmp");

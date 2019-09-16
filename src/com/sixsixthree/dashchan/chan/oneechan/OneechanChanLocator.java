@@ -1,4 +1,4 @@
-package com.sixsixthree.dashchan.chan.sixteenchan;
+package com.sixsixthree.dashchan.chan.oneechan;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -7,16 +7,16 @@ import android.net.Uri;
 
 import chan.content.ChanLocator;
 
-public class SixteenchanChanLocator extends ChanLocator
+public class OneechanChanLocator extends ChanLocator
 {
 	private static final Pattern BOARD_PATH = Pattern.compile("/\\w+(?:/(?:(?:catalog|index|\\d+)\\.html)?)?");
 	private static final Pattern THREAD_PATH = Pattern.compile("/\\w+/res/(\\d+)\\.html");
 	private static final Pattern ATTACHMENT_PATH = Pattern.compile("/\\.media/.+");
 
-	public SixteenchanChanLocator()
+	public OneechanChanLocator()
 	{
-		addChanHost("16chan.xyz");
-		addConvertableChanHost("www.16chan.xyz");
+		addChanHost("onee.ch");
+		addConvertableChanHost("www.onee.ch");
 		setHttpsMode(HttpsMode.HTTPS_ONLY);
 	}
 

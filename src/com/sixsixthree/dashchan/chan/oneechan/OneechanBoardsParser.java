@@ -1,4 +1,4 @@
-package com.sixsixthree.dashchan.chan.sixteenchan;
+package com.sixsixthree.dashchan.chan.oneechan;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,7 +10,7 @@ import chan.text.GroupParser;
 import chan.text.ParseException;
 import chan.util.StringUtils;
 
-public class SixteenchanBoardsParser implements GroupParser.Callback {
+public class OneechanBoardsParser implements GroupParser.Callback {
 	private final String mSource;
 
 	private final ArrayList<BoardCategory> mBoardCategories = new ArrayList<>();
@@ -33,7 +33,7 @@ public class SixteenchanBoardsParser implements GroupParser.Callback {
 	private static final Pattern PATTERN_BOARD_URI = Pattern.compile("/(.*)/");
 	private static final Pattern PATTERN_BOARD_TITLE = Pattern.compile("/\\w+/ - (.*)");
 
-	public SixteenchanBoardsParser(String source) {
+	public OneechanBoardsParser(String source) {
 		mSource = source;
 	}
 
