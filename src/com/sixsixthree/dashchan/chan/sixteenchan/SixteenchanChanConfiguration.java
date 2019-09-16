@@ -31,7 +31,7 @@ public class SixteenchanChanConfiguration extends ChanConfiguration
 		posting.hasCountryFlags = "int".equals(boardName);
 
 		posting.attachmentSpoiler = true;
-		posting.attachmentCount = 4;
+		posting.attachmentCount = 1;
 		posting.attachmentMimeTypes.add("image/jpeg");
 		posting.attachmentMimeTypes.add("image/jpg");
 		posting.attachmentMimeTypes.add("image/bmp");
@@ -43,10 +43,6 @@ public class SixteenchanChanConfiguration extends ChanConfiguration
 		posting.attachmentMimeTypes.add("audio/ogg");
 		posting.attachmentMimeTypes.add("audio/flac");
 		posting.attachmentMimeTypes.add("audio/opus");
-		posting.attachmentMimeTypes.add("application/epub+zip");
-		posting.attachmentMimeTypes.add("application/zip");
-		posting.attachmentMimeTypes.add("application/pdf");
-		posting.attachmentMimeTypes.add("text/plain");
 		return posting;
 	}
 

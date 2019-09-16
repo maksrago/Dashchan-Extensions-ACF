@@ -105,7 +105,7 @@ public class SixteenchanChanPerformer extends ChanPerformer
 	public ReadBoardsResult onReadBoards(ReadBoardsData data) throws HttpException, InvalidResponseException
 	{
 		SixteenchanChanLocator locator = SixteenchanChanLocator.get(this);
-		Uri uri = locator.buildPath(".static/pages", "sidebar.html");
+		Uri uri = locator.buildPath(".static/", "boardsList.html");
 		String responseText = new HttpRequest(uri, data.holder, data).read().getString();
 		try
 		{
