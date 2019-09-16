@@ -1,4 +1,4 @@
-package com.sixsixthree.dashchan.chan.sixteenchan;
+package com.sixsixthree.dashchan.chan.bunkerchan;
 
 import java.util.ArrayList;
 
@@ -22,12 +22,12 @@ import chan.text.ParseException;
 import chan.util.CommonUtils;
 import chan.util.StringUtils;
 
-public class SixteenchanChanPerformer extends ChanPerformer
+public class BunkerchanChanPerformer extends ChanPerformer
 {
 	@Override
 	public ReadThreadsResult onReadThreads(ReadThreadsData data) throws HttpException, InvalidResponseException
 	{
-		SixteenchanChanLocator locator = SixteenchanChanLocator.get(this);
+		BunkerchanChanLocator locator = BunkerchanChanLocator.get(this);
 		Uri uri = locator.buildPath(data.boardName, (data.isCatalog() ? "catalog"
 				: Integer.toString(data.pageNumber + 1 )) + ".json");
 		HttpResponse response = new HttpRequest(uri, data.holder, data).setValidator(data.validator).read();
@@ -41,7 +41,7 @@ public class SixteenchanChanPerformer extends ChanPerformer
 				Posts[] threads = new Posts[threadsArray.length()];
 				for (int i = 0; i < threads.length; i++)
 				{
-					threads[i] = SixteenchanModelMapper.createThread(threadsArray.getJSONObject(i),
+					threads[i] = BunkerchanModelMapper.createThread(threadsArray.getJSONObject(i),
 							locator,false);
 				}
 				return new ReadThreadsResult(threads);
@@ -65,7 +65,7 @@ public class SixteenchanChanPerformer extends ChanPerformer
 					ArrayList<Posts> threads = new ArrayList<>();
 					for (int i = 0; i < jsonArray.length(); i++)
 					{
-						threads.add(SixteenchanModelMapper.createThread(jsonArray.getJSONObject(i),
+						threads.add(BunkerchanModelMapper.createThread(jsonArray.getJSONObject(i),
 								locator, true));
 					}
 					return new ReadThreadsResult(threads);
@@ -83,7 +83,7 @@ public class SixteenchanChanPerformer extends ChanPerformer
 	@Override
 	public ReadPostsResult onReadPosts(ReadPostsData data) throws HttpException, InvalidResponseException
 	{
-		SixteenchanChanLocator locator = SixteenchanChanLocator.get(this);
+		BunkerchanChanLocator locator = BunkerchanChanLocator.get(this);
 		Uri uri = locator.buildPath(data.boardName, "res", data.threadNumber + ".json");
 		JSONObject jsonObject = new HttpRequest(uri, data.holder, data).setValidator(data.validator)
 				.read().getJsonObject();
@@ -91,7 +91,7 @@ public class SixteenchanChanPerformer extends ChanPerformer
 		{
 			try
 			{
-				return new ReadPostsResult(SixteenchanModelMapper.createThread(jsonObject, locator, false));
+				return new ReadPostsResult(BunkerchanModelMapper.createThread(jsonObject, locator, false));
 			}
 			catch (JSONException e)
 			{
@@ -104,12 +104,12 @@ public class SixteenchanChanPerformer extends ChanPerformer
 	@Override
 	public ReadBoardsResult onReadBoards(ReadBoardsData data) throws HttpException, InvalidResponseException
 	{
-		SixteenchanChanLocator locator = SixteenchanChanLocator.get(this);
+		BunkerchanChanLocator locator = BunkerchanChanLocator.get(this);
 		Uri uri = locator.buildPath(".static/", "boardsList.html");
 		String responseText = new HttpRequest(uri, data.holder, data).read().getString();
 		try
 		{
-			return new ReadBoardsResult(new SixteenchanBoardsParser(responseText).convert());
+			return new ReadBoardsResult(new BunkerchanBoardsParser(responseText).convert());
 		}
 		catch (ParseException e)
 		{
@@ -120,7 +120,7 @@ public class SixteenchanChanPerformer extends ChanPerformer
 	@Override
 	public ReadPostsCountResult onReadPostsCount(ReadPostsCountData data) throws HttpException, InvalidResponseException
 	{
-		SixteenchanChanLocator locator = SixteenchanChanLocator.get(this);
+		BunkerchanChanLocator locator = BunkerchanChanLocator.get(this);
 		Uri uri = locator.buildPath(data.boardName, "res", data.threadNumber + ".json");
 		JSONObject jsonObject = new HttpRequest(uri, data.holder, data).setValidator(data.validator)
 				.read().getJsonObject();
@@ -163,7 +163,7 @@ public class SixteenchanChanPerformer extends ChanPerformer
 			}
 		}
 
-		SixteenchanChanLocator locator = SixteenchanChanLocator.get(this);
+		BunkerchanChanLocator locator = BunkerchanChanLocator.get(this);
 		Uri contentUri = data.threadNumber != null ? locator.createThreadUri(data.boardName, data.threadNumber)
 				: locator.createBoardUri(data.boardName, 0);
 		Uri uri = locator.buildPath(data.threadNumber != null ? "/replyThread.js?json=1" : "/newThread.js?json=1");
@@ -219,7 +219,7 @@ public class SixteenchanChanPerformer extends ChanPerformer
 	public SendDeletePostsResult onSendDeletePosts(SendDeletePostsData data) throws HttpException, ApiException,
 			InvalidResponseException
 	{
-		SixteenchanChanLocator locator = SixteenchanChanLocator.get(this);
+		BunkerchanChanLocator locator = BunkerchanChanLocator.get(this);
 		MultipartEntity entity = new MultipartEntity();
 		entity.add("password", data.password);
 		entity.add("action", "delete");
@@ -260,7 +260,7 @@ public class SixteenchanChanPerformer extends ChanPerformer
 	public SendReportPostsResult onSendReportPosts(SendReportPostsData data) throws HttpException, ApiException,
 			InvalidResponseException
 	{
-		SixteenchanChanLocator locator = SixteenchanChanLocator.get(this);
+		BunkerchanChanLocator locator = BunkerchanChanLocator.get(this);
 		MultipartEntity entity = new MultipartEntity();
 		entity.add("action", "report");
 		// TODO: entity.add("captcha", captchaValue);

@@ -1,4 +1,4 @@
-package com.sixsixthree.dashchan.chan.sixteenchan;
+package com.sixsixthree.dashchan.chan.bunkerchan;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,12 +8,12 @@ import android.util.Pair;
 import chan.content.ChanMarkup;
 import chan.text.CommentEditor;
 
-public class SixteenchanChanMarkup extends ChanMarkup
+public class BunkerchanChanMarkup extends ChanMarkup
 {
 	private static final int SUPPORTED_TAGS = TAG_BOLD | TAG_ITALIC | TAG_UNDERLINE | TAG_STRIKE | TAG_SPOILER
 			| TAG_CODE | TAG_HEADING;
 
-	public SixteenchanChanMarkup()
+	public BunkerchanChanMarkup()
 	{
 		addTag("strong", TAG_BOLD);
 		addTag("em", TAG_ITALIC);
