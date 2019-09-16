@@ -1,4 +1,4 @@
-# Dashchan Extension: Kohlchan
+# Dashchan Extension: ACF
 
 Extension for kohlchan.net
 
@@ -6,7 +6,7 @@ Extension for kohlchan.net
 
 | Chan Name       | Host                 | Extension Package Link                                                                                                                |
 | :-------------: | :------------------: | :-----------------------------------------------------------------------------------------------------------------------------------: |
-| Kohlchan        | Kohlchan.net         | [Dashchan-kohlchan-debug.apk](https://github.com/krautbernd/Dashchan-Extensions-kohlchan/releases/download/stable/Dashchan-kohlchan-debug.apk)                        |
+| 16chan        | 16chan.xyz         | [Dashchan-kohlchan-debug.apk](https://github.com/krautbernd/Dashchan-Extensions-kohlchan/releases/download/stable/Dashchan-kohlchan-debug.apk)                        |
 ## Building Guide
 
 1. Load with Android Studio 3.4+
