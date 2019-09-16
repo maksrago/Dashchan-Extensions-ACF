@@ -13,6 +13,7 @@ A collection of Dashchan extensions for imageboards belonging to the [Alternate 
 | :-------------: | :------------------: | :-----------------------------------------------------------------------------------------------------------------------------------: |
 | 16chan        | [16chan.xyz](https://www.16chan.xyz/)         | [Dashchan-16chan.apk](https://github.com/maksrago/Dashchan-Extensions-ACF/releases/download/16chan/Dashchan-16chan.apk)    
 |Bunkerchan|[bunkerchan.xyz](https://bunkerchan.xyz/)|[Dashchan-Endchan.apk](https://github.com/maksrago/Dashchan-Extensions-ACF/releases/download/Bunkerchan/Dashchan-Bunkerchan.apk)|
+|Onee Chan|[onee.ch](https://onee.ch/)|[Dashchan-Onee.apk](https://github.com/maksrago/Dashchan-Extensions-ACF/releases/download/Oneechan/Dashchan-Oneech.apk)|
 |Spacechan|[spacechan.xyz](https://spacechan.xyz/)|[Dashchan-Spacechan.apk](https://github.com/maksrago/Dashchan-Extensions-ACF/releases/download/Spacechan/Dashchan-Spacechan.apk)|
 
 
