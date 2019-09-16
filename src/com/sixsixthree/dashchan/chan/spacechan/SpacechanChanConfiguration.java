@@ -1,10 +1,10 @@
-package com.sixsixthree.dashchan.chan.sixteenchan;
+package com.sixsixthree.dashchan.chan.spacechan;
 
 import chan.content.ChanConfiguration;
 
-public class SixteenchanChanConfiguration extends ChanConfiguration
+public class SpacechanChanConfiguration extends ChanConfiguration
 {
-	public SixteenchanChanConfiguration()
+	public SpacechanChanConfiguration()
 	{
 		request(OPTION_READ_POSTS_COUNT);
 	}
