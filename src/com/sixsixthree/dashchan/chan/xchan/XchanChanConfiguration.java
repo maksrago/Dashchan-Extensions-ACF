@@ -1,10 +1,10 @@
-package com.sixsixthree.dashchan.chan.sixteenchan;
+package com.sixsixthree.dashchan.chan.xchan;
 
 import chan.content.ChanConfiguration;
 
-public class SixteenchanChanConfiguration extends ChanConfiguration
+public class XchanChanConfiguration extends ChanConfiguration
 {
-	public SixteenchanChanConfiguration()
+	public XchanChanConfiguration()
 	{
 		request(OPTION_READ_POSTS_COUNT);
 	}
