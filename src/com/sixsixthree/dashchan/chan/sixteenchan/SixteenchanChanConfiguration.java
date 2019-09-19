@@ -43,6 +43,8 @@ public class SixteenchanChanConfiguration extends ChanConfiguration
 		posting.attachmentMimeTypes.add("audio/ogg");
 		posting.attachmentMimeTypes.add("audio/flac");
 		posting.attachmentMimeTypes.add("audio/opus");
+		posting.attachmentMimeTypes.add("application/pdf");
+		posting.attachmentMimeTypes.add("text/plain");		
 		return posting;
 	}
 
