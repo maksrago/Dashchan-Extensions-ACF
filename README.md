@@ -1,6 +1,8 @@
 # Dashchan Extension: ACF
 
-A collection of Dashchan extensions for imageboards belonging to the [Alternate Chan Federation](http://imageboard.us/)
+A collection of Dashchan extensions for imageboards belonging to the [Alternate Chan Federation](http://imageboard.net/)
+
+Any questions regarding these extensions can be sent over to 663, the maintainer of these addons, you can post a question/thread here: https://16chan.xyz/meta/
 
 ## Setup Guide
 1. **Download the Dashchan client application:** [Dashchan.apk](https://github.com/Mishiranu/Dashchan-Extensions/raw/master/update/package/Dashchan.apk).
