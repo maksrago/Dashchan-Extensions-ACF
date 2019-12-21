@@ -31,7 +31,7 @@ public class SixteenchanChanConfiguration extends ChanConfiguration
 		posting.hasCountryFlags = "int".equals(boardName);
 
 		posting.attachmentSpoiler = true;
-		posting.attachmentCount = 1;
+		posting.attachmentCount = 3;
 		posting.attachmentMimeTypes.add("image/jpeg");
 		posting.attachmentMimeTypes.add("image/jpg");
 		posting.attachmentMimeTypes.add("image/bmp");
